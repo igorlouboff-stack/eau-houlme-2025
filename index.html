@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>L'eau du Houlme 2025</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout : une seule page, chapitres en pleine largeur, navigation collante par chapitre ; la "cuve de 100 litres" ouvre le récit */
+:root{
+  --bg:#EDF2F1; --surface:#FFFFFF; --ink:#0F2A33; --muted:#4D6670; --line:#CBD8DA;
+  --river:#1C6E8C; --river-soft:#D3E7EE; --export:#6FB3C7; --loss:#C2502E; --loss-soft:#F6DDD3;
+  --good:#2E7D4F; --warn:#B7791F; --syndic:#3E8E5E; --fermier:#1C6E8C; --taxes:#8A9AA0;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1A1F; --surface:#13262D; --ink:#E4EEF0; --muted:#97AEB5; --line:#24404A;
+  --river:#4FB0D1; --river-soft:#173A47; --export:#2F7F98; --loss:#E57A55; --loss-soft:#3A2219;
+  --good:#5CC48A; --warn:#E3A847; --syndic:#5DB582; --fermier:#4FB0D1; --taxes:#6E8389; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1A1F; --surface:#13262D; --ink:#E4EEF0; --muted:#97AEB5; --line:#24404A;
+  --river:#4FB0D1; --river-soft:#173A47; --export:#2F7F98; --loss:#E57A55; --loss-soft:#3A2219;
+  --good:#5CC48A; --warn:#E3A847; --syndic:#5DB582; --fermier:#4FB0D1; --taxes:#6E8389; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.08;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.3rem,6vw,4.2rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0;max-width:65ch}
+.eyebrow{font-family:var(--f-data);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--river)}
+.num{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--river);outline-offset:2px;border-radius:4px}
+
+/* nav */
+nav.chap{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav.chap .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.chap a{flex:none;text-decoration:none;color:var(--muted);font-weight:700;font-size:.92rem;padding:6px 12px;border-radius:999px;white-space:nowrap}
+nav.chap a:hover{color:var(--ink);background:var(--river-soft)}
+nav.chap a.on{color:var(--bg);background:var(--ink)}
+
+section{padding-block:56px;border-bottom:1px solid var(--line);scroll-margin-top:60px}
+.sec-head{display:grid;gap:10px;margin-bottom:28px}
+
+/* hero */
+.hero{padding-block:40px 56px}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:44px;align-items:center}
+.hero-grid > *{min-width:0}
+.lede{font-size:1.15rem;margin-top:18px}
+.tank{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;aspect-ratio:1;max-width:420px;width:100%;margin-inline:auto;padding:12px;background:var(--surface);border:2px solid var(--ink);border-radius:6px 6px 22px 22px}
+.cell{border-radius:3px;transition:opacity .25s,transform .25s}
+.cell.c{background:var(--river)} .cell.e{background:var(--export)} .cell.p{background:var(--loss)}
+.tank.focus .cell{opacity:.16} .tank.focus-c .cell.c,.tank.focus-e .cell.e,.tank.focus-p .cell.p{opacity:1}
+.legend{display:grid;gap:8px;margin-top:22px}
+.leg{display:grid;grid-template-columns:18px 1fr auto;gap:12px;align-items:center;text-align:left;background:transparent;border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer}
+.leg:hover,.leg[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
+.sw{width:18px;height:18px;border-radius:3px}
+.leg b{font-family:var(--f-data);font-weight:500}
+.leg small{display:block;color:var(--muted);font-size:.85rem}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:40px}
+.kpi{background:var(--surface);padding:16px 18px;display:grid;gap:2px}
+.kpi .v{font-family:var(--f-display);font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:.9rem}
+
+/* calc */
+.calc{display:grid;grid-template-columns:1fr 1.15fr;gap:32px;align-items:start}
+.calc > *{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px}
+.vol{font-family:var(--f-display);font-size:3.2rem;font-weight:800;line-height:1}
+.vol small{font-size:1.1rem;font-weight:500;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--river);margin:18px 0 10px}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.chip:hover,.chip.on{border-color:var(--river);background:var(--river-soft)}
+.bill-total{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:14px}
+.bill-total .t{font-family:var(--f-display);font-size:2.6rem;font-weight:800}
+.stack{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:4px 0 16px}
+.stack span{transition:flex-basis .3s}
+.lines{display:grid;gap:8px}
+.line{display:grid;grid-template-columns:12px 1fr auto;gap:10px;align-items:baseline}
+.line .sw{width:12px;height:12px;border-radius:2px;transform:translateY(1px)}
+.note{font-size:.9rem;color:var(--muted);margin-top:14px}
+
+/* charts */
+.chart{width:100%;overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto;min-width:560px}
+svg text{fill:var(--muted);font-family:var(--f-body);font-size:12px}
+svg .lab{fill:var(--ink);font-weight:700}
+svg .grid{stroke:var(--line);stroke-width:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.two > *{min-width:0}
+
+/* commune */
+.commune-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:28px;align-items:start}
+select{font:inherit;font-weight:700;font-size:1.1rem;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.cstats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.cstat{border-left:3px solid var(--river);padding-left:12px}
+.cstat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800}
+.cstat .l{font-size:.85rem;color:var(--muted)}
+.delta-up{color:var(--loss)} .delta-down{color:var(--good)}
+.bars{display:grid;gap:3px;max-height:520px;overflow-y:auto;padding-right:6px}
+.bar{display:grid;grid-template-columns:150px 1fr 64px;gap:8px;align-items:center;font-size:.8rem;background:transparent;border:0;padding:2px 0;cursor:pointer;text-align:left}
+.bar .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.bar .t{height:12px;background:var(--river-soft);border-radius:2px;position:relative}
+.bar .t i{position:absolute;inset:0 auto 0 0;background:var(--river);border-radius:2px;opacity:.55}
+.bar .t .avg{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.5}
+.bar.on .n{color:var(--ink);font-weight:700}.bar.on .t i{opacity:1;background:var(--ink)}
+.bar:hover .t i{opacity:.9}
+
+/* santé */
+.health{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.hcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:10px;align-content:start}
+.pill{justify-self:start;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.03em}
+.pill.ok{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.pill.w{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.pill.bad{background:var(--loss-soft);color:var(--loss)}
+.hcard .v{font-family:var(--f-display);font-size:2.2rem;font-weight:800;line-height:1}
+.meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:4px}
+.hcard p{font-size:.93rem;color:var(--muted)}
+.timeline{margin-top:28px}
+.pipe{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.pipe-bar{flex:1 1 260px;height:14px;background:var(--river-soft);border-radius:7px;position:relative;overflow:hidden}
+.pipe-bar i{position:absolute;inset:0 auto 0 0;background:var(--river);border-radius:7px}
+
+/* money */
+.money{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.money > *{min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td.r,th.r{text-align:right;font-family:var(--f-data);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.sum td{font-weight:700;border-bottom:2px solid var(--ink)}
+.flag{color:var(--warn);font-weight:700}
+
+/* quiz */
+.quiz{display:grid;gap:18px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.q h3{margin-bottom:12px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.opt{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--river)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--surface))}
+.opt.wrong{border-color:var(--loss);background:var(--loss-soft)}
+.opt:disabled{cursor:default}
+.expl{margin-top:12px;font-size:.95rem}
+.score{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--ink);color:var(--bg);border-radius:12px;padding:16px 20px}
+.score b{font-family:var(--f-display);font-size:1.6rem}
+.score button{background:var(--bg);color:var(--ink);border:0;border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer}
+
+/* débat */
+.asks{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.ask{border-top:3px solid var(--ink);padding-top:14px;display:grid;gap:8px;align-content:start}
+.ask .tag{font-family:var(--f-data);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ask p{font-size:.95rem}
+.ask .qq{font-style:italic;color:var(--river)}
+footer{padding-block:32px 48px;font-size:.88rem;color:var(--muted)}
+
+@media (max-width:820px){
+  .hero-grid,.calc,.commune-top,.two,.money,.asks{grid-template-columns:1fr}
+  .health{grid-template-columns:1fr 1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+}
+@media (max-width:520px){
+  .health{grid-template-columns:1fr}
+  .bar{grid-template-columns:110px 1fr 56px}
+  .cstats{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<nav class="chap" aria-label="Chapitres">
+  <div class="wrap">
+    <a href="#parcours">Le parcours de l'eau</a>
+    <a href="#facture">Ma facture</a>
+    <a href="#commune">Ma commune</a>
+    <a href="#sante">Santé du réseau</a>
+    <a href="#argent">Où va l'argent</a>
+    <a href="#quiz">Le quiz</a>
+    <a href="#debat">À débattre</a>
+  </div>
+</nav>
+
+<main>
+<section id="parcours" class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Syndicat d'eau du Houlme · Rapport 2025</p>
+        <h1 style="margin-top:12px">Sur 100 litres envoyés dans les tuyaux, 18 n'arrivent nulle part.</h1>
+        <p class="lede">En 2025, le syndicat a mis en réseau 915 604 m³ d'eau, produite à l'usine de Saint-Hilaire-de-Briouze ou achetée à nos voisins. Voici ce qu'elle est devenue. Clique sur une ligne pour l'isoler dans la cuve.</p>
+        <div class="legend" id="legend">
+          <button class="leg" data-k="c" aria-pressed="false"><span class="sw" style="background:var(--river)"></span><span>Consommée chez nous<small>Abonnés + usages publics</small></span><b>576 068 m³</b></button>
+          <button class="leg" data-k="e" aria-pressed="false"><span class="sw" style="background:var(--export)"></span><span>Vendue aux voisins<small>Flers Agglo (Landigou, ex-Messei), Falaise</small></span><b>173 522 m³</b></button>
+          <button class="leg" data-k="p" aria-pressed="false"><span class="sw" style="background:var(--loss)"></span><span>Perdue en fuites<small>Soit 455 m³ par jour</small></span><b>166 014 m³</b></button>
+        </div>
+      </div>
+      <div>
+        <div class="tank" id="tank" role="img" aria-label="Cuve de 100 cases : 63 consommées, 19 vendues aux voisins, 18 perdues"></div>
+        <p class="muted" style="text-align:center;margin:12px auto 0;font-size:.9rem">1 case = 1 % de l'eau mise en distribution</p>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span class="v">7 718</span><span class="l">abonnés, ~14 848 habitants</span></div>
+      <div class="kpi"><span class="v">830 km</span><span class="l">de canalisations</span></div>
+      <div class="kpi"><span class="v">4,05 €</span><span class="l">le m³ TTC en 2026</span></div>
+      <div class="kpi"><span class="v">74 m³</span><span class="l">par abonné et par an</span></div>
+    </div>
+    <p class="note">Les pertes représentent l'équivalent de 66 piscines olympiques, ou de la consommation annuelle d'environ 2 240 abonnés.</p>
+  </div>
+</section>
+
+<section id="facture">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Chapitre 2 · Tarifs au 1er janvier 2026</p>
+      <h2>Combien coûte ton eau, et à qui va chaque euro ?</h2>
+      <p class="muted">Déplace le curseur pour simuler la facture annuelle d'un foyer. La référence nationale est de 120 m³ par an, mais un abonné du Houlme consomme en moyenne 74 m³.</p>
+    </div>
+    <div class="calc">
+      <div class="panel">
+        <label for="m3" class="eyebrow">Consommation annuelle</label>
+        <div class="vol" style="margin-top:8px"><span class="num" id="m3v">120</span> <small>m³ / an</small></div>
+        <input type="range" id="m3" min="0" max="300" step="1" value="120">
+        <div class="presets" id="presets">
+          <button class="chip" data-v="40">Personne seule · 40 m³</button>
+          <button class="chip" data-v="74">Abonné moyen · 74 m³</button>
+          <button class="chip on" data-v="120">Référence · 120 m³</button>
+          <button class="chip" data-v="282">Moyenne Saint-Hilaire · 282 m³</button>
+        </div>
+        <p class="note">L'abonnement est payé même à 0 m³ : c'est pourquoi le prix au m³ grimpe pour les petits consommateurs.</p>
+      </div>
+      <div class="panel">
+        <div class="bill-total"><span class="t num" id="tot">486,21 €</span><span class="muted">soit <b class="num" id="perm3">4,05 €</b> / m³ TTC</span></div>
+        <div class="stack" id="stack" aria-hidden="true"></div>
+        <div class="lines" id="lines"></div>
+        <p class="note">Calcul selon les tarifs 2026 du rapport : part syndicat 67 € + 1,3215 €/m³, part SAUR 53,40 € + 1,0447 €/m³, redevances Agence de l'eau 0,471 €/m³, TVA 5,5 %.</p>
+      </div>
+    </div>
+    <div style="margin-top:40px">
+      <h3>Le prix sur 15 ans, facture de 120 m³</h3>
+      <p class="muted" style="font-size:.93rem;margin-top:4px">Jusqu'en 2023, deux tarifs coexistaient (ex-Houlme et ex-Neuvy). Depuis le contrat unique avec la SAUR, tout le monde paie le même prix.</p>
+      <div class="chart" id="priceChart" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<section id="commune">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Chapitre 3 · 32 communes desservies</p>
+      <h2>Et chez nous ?</h2>
+      <p class="muted">Choisis une commune ou clique sur une barre. Le trait vertical marque la moyenne du syndicat (74 m³ par abonné).</p>
+    </div>
+    <div class="commune-top">
+      <div class="panel">
+        <label for="csel" class="eyebrow">Commune</label>
+        <select id="csel" style="margin-top:8px"></select>
+        <div class="cstats" id="cstats"></div>
+        <p class="note" id="cnote"></p>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:10px">Consommation moyenne par abonné en 2025 (m³)</div>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sante">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Chapitre 4 · Indicateurs réglementaires</p>
+      <h2>Le bilan de santé du réseau</h2>
+      <p class="muted">Les indicateurs que la loi impose de publier, traduits en clair.</p>
+    </div>
+    <div class="health">
+      <div class="hcard"><span class="pill ok">Très bon</span><h3>Qualité bactériologique</h3><span class="v num">100 %</span><div class="meter"><i style="width:100%;background:var(--good)"></i></div><p>34 analyses de l'ARS, toutes conformes. Aucun problème microbien.</p></div>
+      <div class="hcard"><span class="pill w">1 dépassement</span><h3>Qualité physico-chimique</h3><span class="v num">97,4 %</span><div class="meter"><i style="width:97.4%;background:var(--warn)"></i></div><p>Le 2 septembre 2025, un résidu de pesticide (chlorothalonil R471811) a atteint 1,11 µg/L pour une limite de 0,9 µg/L.</p></div>
+      <div class="hcard"><span class="pill ok">En progrès</span><h3>Rendement du réseau</h3><span class="v num">82,3 %</span><div class="meter"><i style="width:82.3%;background:var(--river)"></i></div><p>Part de l'eau mise en réseau qui est réellement utilisée. Meilleur score depuis 10 ans sur l'ex-Houlme.</p></div>
+      <div class="hcard"><span class="pill bad">Alerte</span><h3>Rendement ex-Neuvy</h3><span class="v num">69,3 %</span><div class="meter"><i style="width:69.3%;background:var(--loss)"></i></div><p>Chute de 88 % à 69 % en un an. Les pertes y ont presque triplé (de 7 045 à 18 882 m³).</p></div>
+      <div class="hcard"><span class="pill bad">Très lent</span><h3>Renouvellement des tuyaux</h3><span class="v num">0,23 %/an</span><div class="meter"><i style="width:2.3%;background:var(--loss)"></i></div><p>2,04 km remplacés en 2025, 1,9 km par an en moyenne. À ce rythme, il faudrait environ 435 ans pour refaire tout le réseau.</p></div>
+      <div class="hcard"><span class="pill w">À mi-chemin</span><h3>Protection des captages</h3><span class="v num">60 %</span><div class="meter"><i style="width:60%;background:var(--warn)"></i></div><p>L'arrêté préfectoral existe, mais sa mise en œuvre (terrains, servitudes, travaux) n'est pas terminée. Valeur 2024 reprise dans le rapport.</p></div>
+    </div>
+
+    <div class="two" style="margin-top:40px">
+      <div>
+        <h3>Rendement sur 10 ans</h3>
+        <div class="chart" id="rdtChart" style="margin-top:10px"></div>
+      </div>
+      <div>
+        <h3>D'où vient l'eau brute ?</h3>
+        <p class="muted" style="font-size:.93rem;margin-top:4px">L'usine pompe alternativement dans deux rivières. En 2025, l'Orne a pris le relais de la Rouvre.</p>
+        <div class="timeline">
+          <div><b>La Rouvre</b> <span class="muted">(prise de Laudière, Pointel)</span></div>
+          <div class="pipe"><div class="pipe-bar"><i id="rouvre" style="width:52.4%"></i></div><span class="num">483 628 m³ <span class="muted">-32 %</span></span></div>
+          <div style="margin-top:16px"><b>L'Orne</b> <span class="muted">(prise de la Grande Île)</span></div>
+          <div class="pipe"><div class="pipe-bar"><i style="width:47.6%"></i></div><span class="num">439 484 m³ <span class="muted">+146 %</span></span></div>
+          <p class="note">Total prélevé : 923 112 m³ (+3 %). Autre point fort : l'indice de connaissance du réseau atteint 100 sur 120. Il manque la localisation des branchements et un programme pluriannuel de renouvellement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="argent">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Chapitre 5 · Budget 2025</p>
+      <h2>Où va l'argent ?</h2>
+      <p class="muted">Les factures d'eau ont rapporté 2,88 millions d'euros en 2025 (-1,3 %), répartis entre trois destinataires.</p>
+    </div>
+    <div class="chart" id="budgetChart"></div>
+    <div class="money" style="margin-top:32px">
+      <div>
+        <h3>Travaux réalisés en 2025</h3>
+        <div style="overflow-x:auto;margin-top:8px"><table>
+          <tr><th>Objet</th><th class="r">Montant</th></tr>
+          <tr><td>Renouvellement de canalisations</td><td class="r">455 000 €</td></tr>
+          <tr><td>Dégrilleur prise de la Rouvre + éclairage</td><td class="r">100 000 €</td></tr>
+          <tr><td>Sécurisation réservoirs (Lignou, Briouze, Forêt-Auvray)</td><td class="r">55 000 €</td></tr>
+          <tr><td>Travaux imprévus sur le réseau</td><td class="r">49 000 €</td></tr>
+          <tr><td>Démolition bassins ancienne usine de Laudière</td><td class="r">10 000 €</td></tr>
+          <tr class="sum"><td>Total, sans aucune subvention</td><td class="r">669 000 €</td></tr>
+        </table></div>
+      </div>
+      <div>
+        <h3>Prévu au budget 2026</h3>
+        <div style="overflow-x:auto;margin-top:8px"><table>
+          <tr><th>Objet</th><th class="r">Montant</th></tr>
+          <tr><td>Renouvellement de canalisations (fuites)</td><td class="r">500 000 €</td></tr>
+          <tr><td>Clôtures des périmètres de protection</td><td class="r">100 000 €</td></tr>
+          <tr><td>Équipements réseau (vannes, compteurs, regards)</td><td class="r">90 000 €</td></tr>
+          <tr><td>Groupe électrogène</td><td class="r">70 000 €</td></tr>
+          <tr><td>Local de stockage chlore <span class="flag">(ligne présente 2 fois)</span></td><td class="r">2 × 60 000 €</td></tr>
+          <tr><td>Extensions et déplacements imprévus</td><td class="r">50 000 €</td></tr>
+          <tr class="sum"><td>Total affiché</td><td class="r">930 000 €</td></tr>
+        </table></div>
+      </div>
+    </div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi"><span class="v">3,39 M€</span><span class="l">de dette fin 2025 (-250 k€ en un an)</span></div>
+      <div class="kpi"><span class="v">3,8 ans</span><span class="l">pour rembourser la dette avec l'épargne actuelle</span></div>
+      <div class="kpi"><span class="v">865 €</span><span class="l">d'aide aux foyers en difficulté (impayés 3,36 %)</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Chapitre 6 · À vous de jouer</p>
+      <h2>Le quiz du conseil</h2>
+      <p class="muted">Six questions pour vérifier ce qu'on a retenu. Les réponses s'affichent au clic.</p>
+    </div>
+    <div class="quiz" id="quizBox"></div>
+    <div class="score" style="margin-top:18px"><span>Score : <b id="score">0 / 6</b></span><button id="reset">Rejouer</button></div>
+  </div>
+</section>
+
+<section id="debat" style="border-bottom:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Chapitre 7 · Pour la discussion</p>
+      <h2>Six questions à porter au syndicat</h2>
+      <p class="muted">Le rapport doit être présenté au conseil municipal avant le 31 décembre 2026. Voici les points qui méritent un échange.</p>
+    </div>
+    <div class="asks">
+      <div class="ask"><span class="tag">Réseau ex-Neuvy</span><h3>Pourquoi le rendement a-t-il chuté à 69 % ?</h3><p>Le contrat SAUR fixe des objectifs de rendement par ancien territoire (88 % pour l'ex-Neuvy en 2023, en hausse ensuite). L'objectif n'est donc pas tenu en 2025.</p><p class="qq">Une fuite majeure a-t-elle été identifiée ? Des pénalités sont-elles prévues ?</p></div>
+      <div class="ask"><span class="tag">Patrimoine</span><h3>Le rythme de renouvellement est-il tenable ?</h3><p>0,23 % par an, c'est environ 435 ans pour refaire le réseau. Il n'existe pas encore de programme pluriannuel chiffré sur 3 ans.</p><p class="qq">Peut-on bâtir ce programme et viser des subventions (Agence de l'eau, DETR) ?</p></div>
+      <div class="ask"><span class="tag">Qualité</span><h3>Quel suivi après le dépassement en pesticide ?</h3><p>Un résidu de chlorothalonil a dépassé la limite le 2 septembre 2025. Ce fongicide est interdit en Europe depuis 2020 mais persiste dans les sols.</p><p class="qq">Quelles analyses depuis ? Le basculement vers l'Orne y est-il lié ?</p></div>
+      <div class="ask"><span class="tag">Ressource</span><h3>Où en est la protection des captages ?</h3><p>L'indice reste à 60 %, et c'est une valeur de 2024. 100 000 € de clôtures sont prévus en 2026.</p><p class="qq">Quel calendrier pour atteindre 80 % puis 100 % ?</p></div>
+      <div class="ask"><span class="tag">Budget</span><h3>Le local chlore est-il budgété deux fois ?</h3><p>Le programme 2026 contient deux lignes identiques de 60 000 €. Doublon ou deux locaux distincts ?</p><p class="qq">Le total réel des investissements 2026 est-il 870 000 € ou 930 000 € ?</p></div>
+      <div class="ask"><span class="tag">Financement</span><h3>Zéro subvention en 2025 : est-ce normal ?</h3><p>Les 669 000 € de travaux ont été financés sans aucune aide. La dette baisse, ce qui laisse une marge de manœuvre.</p><p class="qq">Quels dispositifs ont été sollicités, et lesquels pourraient l'être ?</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Sources : Rapport sur le prix et la qualité du service public de l'eau potable, exercice 2025, SIAEP du Houlme ; synthèse RPQS 2025 ; délibération C2026-018 du comité syndical du 20 octobre 2026 (adoptée à l'unanimité, 32 voix). Équivalences (piscines, années de renouvellement) calculées à partir des chiffres du rapport. Le rapport indique 147 667 m³ d'exportations dans un tableau, mais le détail et la synthèse donnent 173 522 m³ : c'est ce dernier chiffre qui est retenu ici.
+  </div>
+</footer>
+
+<script>
+(function(){
+const fmt=(n,d=0)=>n.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/ /g,' ');
+const NS='http://www.w3.org/2000/svg';
+
+/* ---- Cuve ---- */
+const tank=document.getElementById('tank');
+const cells=[...Array(63).fill('c'),...Array(19).fill('e'),...Array(18).fill('p')];
+cells.forEach(k=>{const d=document.createElement('div');d.className='cell '+k;tank.appendChild(d)});
+let focusK=null;
+document.querySelectorAll('.leg').forEach(b=>b.addEventListener('click',()=>{
+  const k=b.dataset.k; focusK = focusK===k?null:k;
+  tank.className='tank'+(focusK?' focus focus-'+focusK:'');
+  document.querySelectorAll('.leg').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===focusK));
+}));
+
+/* ---- Calculateur ---- */
+const T={sf:67,sv:1.3215,ff:53.40,fv:1.0447,ag:0.471,tva:0.055};
+const slider=document.getElementById('m3');
+function bill(v){
+  const s=T.sf+T.sv*v, f=T.ff+T.fv*v, a=T.ag*v, ht=s+f+a, tva=ht*T.tva;
+  return {s,f,a,tva,tot:ht+tva};
+}
+function renderBill(){
+  const v=+slider.value, b=bill(v);
+  document.getElementById('m3v').textContent=v;
+  document.getElementById('tot').textContent=fmt(b.tot,2)+' €';
+  document.getElementById('perm3').textContent=v?fmt(b.tot/v,2)+' €':'-';
+  const parts=[['Syndicat du Houlme','--syndic',b.s,'Investit dans les tuyaux, l\'usine, rembourse la dette'],['SAUR (exploitant)','--fermier',b.f,'Fait tourner le service au quotidien'],['Agence de l\'eau','--export',b.a,'Redevances : protection ressource, consommation, réseaux'],['TVA 5,5 %','--taxes',b.tva,'Reversée à l\'État']];
+  document.getElementById('stack').innerHTML=parts.map(p=>`<span style="flex-basis:${p[2]/b.tot*100}%;background:var(${p[1]})"></span>`).join('');
+  document.getElementById('lines').innerHTML=parts.map(p=>`<div class="line"><span class="sw" style="background:var(${p[1]})"></span><span><b>${p[0]}</b><br><span class="muted" style="font-size:.85rem">${p[3]}</span></span><span class="num">${fmt(p[2],2)} € <span class="muted">${Math.round(p[2]/b.tot*100)} %</span></span></div>`).join('');
+  document.querySelectorAll('#presets .chip').forEach(c=>c.classList.toggle('on',+c.dataset.v===v));
+}
+slider.addEventListener('input',renderBill);
+document.querySelectorAll('#presets .chip').forEach(c=>c.addEventListener('click',()=>{slider.value=c.dataset.v;renderBill()}));
+renderBill();
+
+/* ---- Prix 15 ans ---- */
+const price=[['2011','Houlme',181.40,146.69,79.95,3.40],['2011','Neuvy',217.84,122.97,66.12,3.39],['2015','Houlme',185,190.45,80.15,3.80],['2015','Neuvy',217.84,136.25,76.44,3.59],['2023','Houlme',185,228.88,55.43,3.91],['2023','Neuvy',217.84,160.96,48.69,3.56],['Avr. 2023','Unifié',225.58,174.42,54.66,3.79],['2025','Unifié',225.58,179.48,86.97,4.10],['2026','Unifié',225.58,178.76,81.87,4.05]];
+(function(){
+  const W=760,H=300,L=46,R=10,Tp=28,B=48,max=500,iw=W-L-R,ih=H-Tp-B,bw=iw/price.length;
+  const y=v=>Tp+ih-(v/max)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Évolution du prix pour 120 m³ de 2011 à 2026">`;
+  for(let g=0;g<=500;g+=100){s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(g)}" y2="${y(g)}"/><text x="${L-6}" y="${y(g)+4}" text-anchor="end">${g} €</text>`}
+  price.forEach((p,i)=>{
+    const x=L+i*bw+bw*.18,w=bw*.64;let acc=0;
+    [[p[2],'--syndic'],[p[3],'--fermier'],[p[4],'--taxes']].forEach(([v,c])=>{s+=`<rect x="${x}" y="${y(acc+v)}" width="${w}" height="${y(acc)-y(acc+v)}" style="fill:var(${c})"/>`;acc+=v});
+    s+=`<text class="lab" x="${x+w/2}" y="${y(acc)-8}" text-anchor="middle">${fmt(p[5],2)}</text>`;
+    s+=`<text x="${x+w/2}" y="${H-B+18}" text-anchor="middle">${p[0]}</text><text x="${x+w/2}" y="${H-B+33}" text-anchor="middle">${p[1]}</text>`;
+  });
+  s+=`<g transform="translate(${L},12)"><rect width="10" height="10" style="fill:var(--syndic)"/><text x="14" y="9">Part syndicat</text><rect x="110" width="10" height="10" style="fill:var(--fermier)"/><text x="124" y="9">Part exploitant</text><rect x="230" width="10" height="10" style="fill:var(--taxes)"/><text x="244" y="9">Redevances et TVA</text><text x="400" y="9">Étiquettes : € TTC par m³</text></g>`;
+  document.getElementById('priceChart').innerHTML=s+'</svg>';
+})();
+
+/* ---- Communes ---- */
+const C=[["Athis-Val-de-Rouvre",2236,163441,2242,157682],["Bazoches-au-Houlme",222,20772,220,19360],["Bellou-en-Houlme",14,518,14,590],["Briouze",876,57565,873,53484],["Cahan",4,243,5,292],["Champcerie",74,12522,75,7478],["Craménil",79,3267,80,4335],["Durcet",133,8928,133,9210],["Faverolles",70,3260,71,4239],["La Lande-de-Lougé",18,988,18,1405],["La Lande-Saint-Siméon",85,7696,88,5692],["Le Grais",85,4851,88,5673],["Le Ménil-de-Briouze",263,20095,267,19626],["Les Isles-Bardel",54,4407,54,4449],["Les Yveteaux",47,6524,49,3871],["Lignou",70,3786,70,5378],["Lonlay-le-Tesson",102,7550,102,7985],["Lougé-sur-Maire",141,9621,142,9903],["Ménil-Gondouin",85,4819,89,10312],["Ménil-Hermei",129,7365,131,8762],["Ménil-Hubert-sur-Orne",252,14509,252,14515],["Ménil-Vin",39,2179,39,3395],["Montreuil-au-Houlme",52,3725,52,2583],["Neuvy-au-Houlme",101,11488,101,8748],["Pointel",152,11965,151,14407],["Putanges-le-Lac",1298,89735,1305,85038],["Saint-André-de-Briouze",73,4535,76,6749],["Saint-Hilaire-de-Briouze",133,50977,132,37269],["Saint-Philbert-sur-Orne",98,6088,99,6277],["Sainte-Honorine-la-Chardonne",365,37748,367,28648],["Sainte-Honorine-la-Guillaume",222,11079,220,13285],["Sainte-Opportune",113,11113,113,8922]].map(r=>({n:r[0],a24:r[1],v24:r[2],a:r[3],v:r[4],c:r[4]/r[3]}));
+const sel=document.getElementById('csel'), bars=document.getElementById('bars');
+C.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.n;sel.appendChild(o)});
+const sorted=[...C].sort((a,b)=>b.c-a.c), maxC=sorted[0].c;
+const byAbo=[...C].sort((a,b)=>b.a-a.a);
+sorted.forEach(c=>{
+  const b=document.createElement('button');b.className='bar';b.dataset.i=C.indexOf(c);
+  b.innerHTML=`<span class="n">${c.n}</span><span class="t"><i style="width:${c.c/maxC*100}%"></i><span class="avg" style="left:${74/maxC*100}%"></span></span><span class="num">${fmt(c.c)}</span>`;
+  b.addEventListener('click',()=>{sel.value=b.dataset.i;renderC()});bars.appendChild(b);
+});
+function renderC(){
+  const i=+sel.value,c=C[i],d=(c.v-c.v24)/c.v24*100,rank=sorted.indexOf(c)+1,share=c.a/7718*100;
+  document.getElementById('cstats').innerHTML=`
+    <div class="cstat"><div class="v num">${fmt(c.a)}</div><div class="l">abonnés (${fmt(share,1)} % du syndicat)</div></div>
+    <div class="cstat"><div class="v num">${fmt(c.v)} m³</div><div class="l">vendus en 2025</div></div>
+    <div class="cstat"><div class="v num">${fmt(c.c)} m³</div><div class="l">par abonné · ${rank}<sup>e</sup> sur 32</div></div>
+    <div class="cstat"><div class="v num ${d>0?'delta-up':'delta-down'}">${d>0?'+':''}${fmt(d,1)} %</div><div class="l">volume vs 2024 (${fmt(c.v24)} m³)</div></div>`;
+  const facture=bill(c.c).tot;
+  document.getElementById('cnote').innerHTML=`Un abonné moyen de ${c.n} paie environ <b>${fmt(facture,0)} € TTC</b> par an aux tarifs 2026. ${c.c>74?'Sa consommation dépasse la moyenne du syndicat, souvent signe d\'exploitations agricoles ou d\'activités.':'Sa consommation reste sous la moyenne du syndicat (74 m³).'}`;
+  bars.querySelectorAll('.bar').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
+}
+sel.addEventListener('change',renderC);
+sel.value=C.findIndex(c=>c.n==='Putanges-le-Lac');renderC();
+
+/* ---- Rendement ---- */
+(function(){
+  const yrs=[2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+  const h=[77.87,72.55,76.30,75.95,77.83,75.47,72.17,78.99,80.78,82.77];
+  const n=[89.69,87.45,77.17,77.23,87.65,88.52,88.15,96.63,88.31,69.30];
+  const W=560,H=280,L=40,R=70,Tp=16,B=30,lo=60,hi=100,iw=W-L-R,ih=H-Tp-B;
+  const x=i=>L+i*iw/(yrs.length-1), y=v=>Tp+ih-(v-lo)/(hi-lo)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Rendement du réseau 2016-2025, ex-Houlme et ex-Neuvy">`;
+  for(let g=60;g<=100;g+=10)s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(g)}" y2="${y(g)}"/><text x="${L-6}" y="${y(g)+4}" text-anchor="end">${g} %</text>`;
+  yrs.forEach((yr,i)=>{if(i%3===0||i===9)s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${yr}</text>`});
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i)+','+y(v)).join('');
+  s+=`<path d="${path(h)}" fill="none" style="stroke:var(--river)" stroke-width="3"/>`;
+  s+=`<path d="${path(n)}" fill="none" style="stroke:var(--loss)" stroke-width="3" stroke-dasharray="6 4"/>`;
+  s+=`<circle cx="${x(9)}" cy="${y(h[9])}" r="5" style="fill:var(--river)"/><circle cx="${x(9)}" cy="${y(n[9])}" r="5" style="fill:var(--loss)"/>`;
+  s+=`<text class="lab" x="${x(9)+9}" y="${y(h[9])+4}">Ex-Houlme</text><text x="${x(9)+9}" y="${y(h[9])+18}">82,8 %</text>`;
+  s+=`<text class="lab" x="${x(9)+9}" y="${y(n[9])+4}">Ex-Neuvy</text><text x="${x(9)+9}" y="${y(n[9])+18}">69,3 %</text>`;
+  document.getElementById('rdtChart').innerHTML=s+'</svg>';
+})();
+
+/* ---- Budget ---- */
+(function(){
+  const parts=[['Syndicat du Houlme',1249200,'--syndic','Surtaxe : investissements et dette'],['SAUR',1222641,'--fermier','Ventes d\'eau, travaux, produits annexes'],['Autres organismes',406227,'--taxes','Agence de l\'eau (261 k€, +62 %) et TVA (145 k€)']];
+  const tot=2878068,W=760,H=150;let x=0;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Répartition des 2,88 M€ de recettes 2025">`;
+  parts.forEach(p=>{const w=p[1]/tot*W;s+=`<rect x="${x}" y="0" width="${w-2}" height="54" rx="4" style="fill:var(${p[2]})"/>`;
+    s+=`<text class="lab" x="${x+4}" y="78">${p[0]} · ${Math.round(p[1]/tot*100)} %</text><text x="${x+4}" y="96">${fmt(p[1])} €</text><text x="${x+4}" y="114" style="font-size:11px">${p[3]}</text>`;x+=w});
+  document.getElementById('budgetChart').innerHTML=s+'</svg>';
+})();
+
+/* ---- Quiz ---- */
+const Q=[
+ {q:"Combien coûte 1 m³ d'eau TTC (facture de 120 m³) en 2026 ?",o:["2,10 €","3,40 €","4,05 €","5,60 €"],a:2,e:"4,05 € par m³, soit 486,21 € pour 120 m³. Légère baisse par rapport à 2025 (4,10 €), grâce à la baisse de la redevance consommation."},
+ {q:"Sur 100 litres mis en distribution, combien sont perdus en fuites ?",o:["3 litres","8 litres","18 litres","35 litres"],a:2,e:"Environ 18 litres : 166 014 m³ de pertes sur 915 604 m³ mis en réseau. Le rendement officiel (82 %) se lit de la même façon."},
+ {q:"Quelle longueur fait le réseau de canalisations ?",o:["83 km","830 km","2 400 km"],a:1,e:"829,5 km hors branchements, soit plus que Paris-Marseille à vol d'oiseau."},
+ {q:"Au rythme actuel, combien de temps pour renouveler tout le réseau ?",o:["40 ans","120 ans","Plus de 400 ans"],a:2,e:"Avec 0,23 % par an, il faudrait environ 435 ans. Une canalisation dure en général 50 à 80 ans."},
+ {q:"Qui exploite le service au quotidien, et jusqu'à quand ?",o:["Veolia, jusqu'en 2030","La SAUR, jusqu'au 31 mars 2035","Le syndicat en régie"],a:1,e:"La SAUR, via un contrat de concession de 12 ans démarré le 1er avril 2023. Le syndicat garde la charge des gros renouvellements."},
+ {q:"Sur une facture de 120 m³, qui reçoit la plus grosse part ?",o:["L'exploitant SAUR","Le syndicat du Houlme","L'Agence de l'eau","L'État (TVA)"],a:1,e:"Le syndicat : 225,58 €, soit 46 %. La SAUR perçoit 178,76 € (37 %), le reste part en redevances et TVA."}
+];
+const box=document.getElementById('quizBox');let score=0;
+function buildQuiz(){
+  score=0;document.getElementById('score').textContent='0 / '+Q.length;box.innerHTML='';
+  Q.forEach((it,qi)=>{
+    const d=document.createElement('div');d.className='q';
+    d.innerHTML=`<h3>${qi+1}. ${it.q}</h3><div class="opts">${it.o.map((o,oi)=>`<button class="opt" data-oi="${oi}">${o}</button>`).join('')}</div><p class="expl" hidden></p>`;
+    d.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      const oi=+b.dataset.oi;d.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.oi===it.a)x.classList.add('right')});
+      if(oi===it.a){score++}else b.classList.add('wrong');
+      const ex=d.querySelector('.expl');ex.hidden=false;ex.innerHTML=(oi===it.a?'<b>Bien vu.</b> ':'<b>Pas tout à fait.</b> ')+it.e;
+      document.getElementById('score').textContent=score+' / '+Q.length;
+    }));
+    box.appendChild(d);
+  });
+}
+document.getElementById('reset').addEventListener('click',buildQuiz);buildQuiz();
+
+/* ---- Nav active + hash ---- */
+const links=[...document.querySelectorAll('nav.chap a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}})},{rootMargin:'-40% 0px -55% 0px'});
+secs.forEach(s=>s&&io.observe(s));
+if(location.hash){const t=document.querySelector(location.hash);if(t)setTimeout(()=>t.scrollIntoView(),50)}
+})();
+</script>
+
+</body>
+</html>
